@@ -2,7 +2,7 @@
 
 namespace ExaminationSystem.ViewModels.Instructors
 {
-    public class InstructorEditViewModel:InstructorCreateViewModel
+    public class InstructorEditViewModel : InstructorCreateViewModel
     {
         public int ID { get; set; }
     }

@@ -1,4 +1,6 @@
 ﻿using ExaminationSystem.Services.Instructors;
+using ExaminationSystem.Services.InstructorStudents;
+using ExaminationSystem.ViewModels.Courses;
 using ExaminationSystem.ViewModels.Instructors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +12,11 @@ namespace ExaminationSystem.Controllers
     public class InstructorController : ControllerBase
     {
         IInstructorService _instructorService;
+        IInstructorCourseService _instructorCourseService;
         public InstructorController()
         {
             _instructorService = new InstructorService();
+            _instructorCourseService = new InstructorCourseService();
         }
 
         [HttpPost]
@@ -57,6 +61,12 @@ namespace ExaminationSystem.Controllers
         {
             _instructorService.Update(id, viewModel);
             return Ok();
+        }
+
+        [HttpGet("Courses")]
+        public IEnumerable<CourseViewModel> GetCourses(int instructorID)
+        {
+            return _instructorCourseService.GetCourses(instructorID);
         }
 
     }

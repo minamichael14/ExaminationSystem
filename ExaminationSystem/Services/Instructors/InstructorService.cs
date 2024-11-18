@@ -18,15 +18,6 @@ namespace ExaminationSystem.Services.Instructors
             _instructorRepository.SaveChanges();
         }
 
-        public void Delete(int id)
-        {
-            var instructor = new Instructor { ID = id };
-
-            _instructorRepository.Delete(instructor);
-
-            _instructorRepository.SaveChanges();
-        }
-
         public IEnumerable<InstructorViewModel> GetAll()
         {
             return _instructorRepository.Get().ToViewModel();
@@ -39,6 +30,15 @@ namespace ExaminationSystem.Services.Instructors
                 .ToViewModel().FirstOrDefault();
 
             return instructor;
+        }
+
+        public void Delete(int id)
+        {
+            var instructor = new Instructor { ID = id };
+
+            _instructorRepository.Delete(instructor);
+
+            _instructorRepository.SaveChanges();
         }
 
         public void Update(int id, InstructorEditViewModel viewModel)
