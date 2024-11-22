@@ -16,7 +16,7 @@
             }
             catch (Exception ex)
             {
-                File.WriteAllText("E:\\Dotnet projects\\Logs.txt" , $"Error: {ex.Message}");
+                File.WriteAllText("D:\\Logs.txt" , $"Error: {ex.Message}");
             }
         }
     }

@@ -1,4 +1,6 @@
-﻿namespace ExaminationSystem.Data.Repository
+﻿using ExaminationSystem.Models;
+
+namespace ExaminationSystem.Data.Repository
 {
     public interface IRepository<Entity>
     {

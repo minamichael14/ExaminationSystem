@@ -1,6 +1,7 @@
 ﻿using ExaminationSystem.Data.Repository;
 using ExaminationSystem.Models;
 using ExaminationSystem.Services.StudentCourses;
+using ExaminationSystem.Services.Students;
 using ExaminationSystem.ViewModels.Courses;
 using ExaminationSystem.ViewModels.Students;
 using Microsoft.AspNetCore.Http;
@@ -12,58 +13,45 @@ namespace ExaminationSystem.Controllers
     [ApiController]
     public class StudentController : ControllerBase
     {
-        IRepository<Student> _studentRepository;
         IStudentCourseService _studentCourseService;
+        IStudentService _studentService;
 
         public StudentController()
         {
-            _studentRepository = new Repository<Student>();
             _studentCourseService = new StudentCourseService();
+            _studentService = new StudentService();
         }
 
         [HttpGet]
         public IEnumerable<StudentViewModel> GetAll()
         {
-            return _studentRepository.Get().ToViewModel();
+            return _studentService.GetAll();
         }
 
         [HttpGet("{id}")]
         public StudentViewModel GetByID(int id)
         {
-            return _studentRepository.Get().Where(x => x.ID == id)
-                .ToViewModel().FirstOrDefault();
+            return _studentService.GetByID(id);
         }
 
         [HttpPost]
         public String Create(StudentCreateViewModel viewModel)
         {
-            _studentRepository.Add(viewModel.ToModel());
-            _studentRepository.SaveChanges();
+            _studentService.Create(viewModel);
             return "Done";
         }
 
         [HttpDelete]
         public void Delete(int id) 
         {
-            var student = new Student { ID = id };
-            _studentRepository.Delete(student);
-            _studentRepository.SaveChanges();
+            _studentService.Delete(id);
 
         }
 
         [HttpPut]
         public void Update(int id, StudentEditViewModel viewModel)
         {
-            viewModel.ID = id;
-            var student = viewModel.ToModel();
-            _studentRepository.SaveInclude(
-                student,
-                nameof(student.Name),
-                nameof(student.Grade),
-                nameof(student.Phone),
-                nameof(student.Age)
-                );
-            _studentRepository.SaveChanges();
+            _studentService.Update(id,viewModel);           
         }
 
         [HttpGet("Courses")]

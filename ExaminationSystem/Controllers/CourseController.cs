@@ -1,5 +1,4 @@
-﻿using ExaminationSystem.Data.Repository;
-using ExaminationSystem.Models;
+﻿using ExaminationSystem.Services.Courses;
 using ExaminationSystem.Services.InstructorStudents;
 using ExaminationSystem.Services.StudentCourses;
 using ExaminationSystem.ViewModels.Courses;
@@ -14,19 +13,13 @@ namespace ExaminationSystem.Controllers
     [ApiController]
     public class CourseController : ControllerBase
     {
-        
-        //- DeleteCourse
-        //- EditCourse
-        //- GetCourse
-        //- GetCourseByID
-
-        IRepository<Course> _courserepository;
+        ICourseService _courseService;
         IInstructorCourseService _instructorCourseService;
         IStudentCourseService _studentCourseService;
         IInstructorStudentService _instructorStudentService;
         public CourseController()
         {
-            _courserepository = new Repository<Course>();
+            _courseService = new CourseService();
             _instructorCourseService = new InstructorCourseService();
             _studentCourseService = new StudentCourseService();
             _instructorStudentService = new InstructorStudentService();
@@ -36,10 +29,9 @@ namespace ExaminationSystem.Controllers
         [HttpPost]
         public String Create(CourseCreateViewModel courseViewModel)
         {
-            var course = courseViewModel.ToModel();
-            _courserepository.Add(course);
-            _courserepository.SaveChanges();
-            _instructorCourseService.AddInstructorToCourse(course.ID, courseViewModel.InstrucorID);
+
+            var courseID = _courseService.Create(courseViewModel);
+            _instructorCourseService.AddInstructorToCourse(courseID, courseViewModel.InstrucorID);
             return "Done";
         }
         
@@ -78,24 +70,20 @@ namespace ExaminationSystem.Controllers
         [HttpDelete]
         public void Delete(int CourseID)
         {
-            var course = new Course { ID = CourseID };
-            _courserepository.Delete(course);
-            _courserepository.SaveChanges();
+            _courseService.Delete(CourseID);
         }
 
         // EditCourse
         [HttpPut]
         public void Update(CourseEditViewModel viewModel)
         {
-            var course = viewModel.ToModel();
-            _courserepository.SaveInclude(course, nameof(course.Name), nameof(course.Description), nameof(course.Hours));
-            _courserepository.SaveChanges();
+            _courseService.Update(viewModel);
         }
 
         [HttpGet]
         public IEnumerable<CourseViewModel> GetAll()
         {
-            return _courserepository.Get().ToViewModel();
+            return _courseService.GetAll();
         }
     }
 }
