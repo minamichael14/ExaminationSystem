@@ -37,7 +37,7 @@ namespace ExaminationSystem.Services.Answers
         public void Update(AnswerEditViewModel ViewModel)
         {
             var answer = ViewModel.ToModel();
-            _answerRepository.SaveInclude(answer , nameof(answer.QuestionID), nameof(answer.ChoiceID));
+            _answerRepository.SaveInclude(answer , nameof(answer.ChoiceID));
             _answerRepository.SaveChanges();
         }
     }

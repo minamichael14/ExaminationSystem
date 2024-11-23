@@ -12,5 +12,6 @@
         public int Hours { get; set; }
         public ICollection<InstructorCourse> InstructorCourses { get; set; }
         public ICollection<StudentCourse> StudentCourses { get; set; }
+        public ICollection<Question> Questions { get; set; }
     }
 }

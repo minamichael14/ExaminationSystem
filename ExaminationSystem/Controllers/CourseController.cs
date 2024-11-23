@@ -1,8 +1,10 @@
 ﻿using ExaminationSystem.Services.Courses;
 using ExaminationSystem.Services.InstructorStudents;
+using ExaminationSystem.Services.Questions;
 using ExaminationSystem.Services.StudentCourses;
 using ExaminationSystem.ViewModels.Courses;
 using ExaminationSystem.ViewModels.Instructors;
+using ExaminationSystem.ViewModels.Questions;
 using ExaminationSystem.ViewModels.Students;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,12 +19,14 @@ namespace ExaminationSystem.Controllers
         IInstructorCourseService _instructorCourseService;
         IStudentCourseService _studentCourseService;
         IInstructorStudentService _instructorStudentService;
-        public CourseController()
+        IQuestoionService _questoionService;
+        public CourseController( IQuestoionService questoionService)
         {
             _courseService = new CourseService();
             _instructorCourseService = new InstructorCourseService();
             _studentCourseService = new StudentCourseService();
             _instructorStudentService = new InstructorStudentService();
+            _questoionService = questoionService;
         }
 
         //CreateCourse: Instructor create course
@@ -63,6 +67,13 @@ namespace ExaminationSystem.Controllers
         {
             return _studentCourseService.GetStudents(CourseID);
 
+        }
+
+
+        [HttpGet("Question")]
+        public IEnumerable<QuestionViewModel> GetQuestion(int CourseID)
+        {
+            return _questoionService.GetByCourse(CourseID);
         }
 
 

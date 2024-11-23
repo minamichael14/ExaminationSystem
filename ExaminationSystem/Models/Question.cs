@@ -15,5 +15,8 @@
 
         public Answer Answer { get; set; }
 
+        public int CourseID { get; set; }
+        public Course Course { get; set; }
+
     }
 }

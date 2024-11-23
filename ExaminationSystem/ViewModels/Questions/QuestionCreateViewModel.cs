@@ -5,12 +5,8 @@ using ExaminationSystem.ViewModels.Courses;
 
 namespace ExaminationSystem.ViewModels.Questions
 {
-    public class QuestionCreateViewModel
+    public class QuestionCreateViewModel :QuestionBaseViewModel
     {
-        public string Body { get; set; }
-        public int Grade { get; set; }
-        public string level { get; set; }
-
         public ICollection<ChoiceCreateViewModel> Choices { get; set; }
     }
 
@@ -22,7 +18,8 @@ namespace ExaminationSystem.ViewModels.Questions
             {
                 level = viewModel.level,
                 Body = viewModel.Body,
-                Grade = viewModel.Grade
+                Grade = viewModel.Grade,
+                CourseID = viewModel.CourseID
             };
         }
     }

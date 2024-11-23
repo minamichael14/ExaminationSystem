@@ -3,7 +3,7 @@ using ExaminationSystem.ViewModels.Choices;
 
 namespace ExaminationSystem.ViewModels.Answers
 {
-    public class AnswerEditViewModel
+    public class AnswerEditViewModel:AnswerCreateViewModel
     {
         public int ID { get; set; }
     }
@@ -12,7 +12,7 @@ namespace ExaminationSystem.ViewModels.Answers
     {
         public static Answer ToModel(this AnswerEditViewModel viewModel)
         {
-            var answer = ((AnswerEditViewModel)viewModel).ToModel();
+            var answer = ((AnswerCreateViewModel)viewModel).ToModel();
             answer.ID = viewModel.ID;
             return answer;
         }

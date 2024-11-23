@@ -49,23 +49,31 @@ namespace ExaminationSystem.Services.Questions
             
         }
 
+        public IEnumerable<QuestionViewModel> GetByCourse(int courseID)
+        {
+            var question = _questioRepository.Get().Where(x=> x.CourseID == courseID);
+
+            return _mapper.ProjectTo<QuestionViewModel>(question);
+        }
+
         public QuestionViewModel GetById(int questionId)
         {
             var question = _questioRepository.Get().Where(x => x.ID == questionId);
 
             return _mapper.ProjectTo<QuestionViewModel>(question).FirstOrDefault();
 
-            //return _questioRepository.Get()
-            //    .Where(x => x.ID == questionId)
-            //    .FirstOrDefault()
-            //    .ToViewModel();
         }
 
         public void Update(QuestionEditViewModel ViewModel)
         {
+            //var question = _mapper.Map<Question>(ViewModel);
             var question = ViewModel.ToModel();
             _questioRepository.SaveInclude(question, nameof(question.Body), nameof(question.Grade), nameof(question.level));
             _questioRepository.SaveChanges();
+            foreach (var choice in ViewModel.Choices)
+            {
+                _choiceService.Update(choice);
+            }
         }
     }
 }

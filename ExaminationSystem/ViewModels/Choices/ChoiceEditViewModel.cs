@@ -12,7 +12,7 @@ namespace ExaminationSystem.ViewModels.Choices
     {
         public static Choice ToModel(this ChoiceEditViewModel viewModel)
         {
-            var choice = ((ChoiceEditViewModel)viewModel).ToModel();
+            var choice = ((ChoiceCreateViewModel)viewModel).ToModel();
             choice.ID = viewModel.ID;
             return choice;
         }

@@ -30,7 +30,7 @@ namespace ExaminationSystem.Services.Choices
                     QuestioID = choice.QuestionID
                 };
                 _answerService.Add(answerViewModel);
-                }
+            }
         
         }
 
@@ -56,6 +56,8 @@ namespace ExaminationSystem.Services.Choices
             var choice = ViewModel.ToModel();
             _choiceRepository.SaveInclude(choice, nameof(choice.Content));
             _choiceRepository.SaveChanges();
+            
+
         }
 
     }

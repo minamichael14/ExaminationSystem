@@ -1,8 +1,4 @@
-﻿using ExaminationSystem.Services.Answers;
-using ExaminationSystem.Services.Choices;
-using ExaminationSystem.Services.Questions;
-using ExaminationSystem.ViewModels.Answers;
-using ExaminationSystem.ViewModels.Choices;
+﻿using ExaminationSystem.Services.Questions;
 using ExaminationSystem.ViewModels.Questions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -37,5 +33,19 @@ namespace ExaminationSystem.Controllers
         {
             return _questionService.GetById(id);
         }
+
+        [HttpDelete]
+        public void Delete(int questionID)
+        {
+            _questionService.Delete(questionID);
+        }
+
+        [HttpPut]
+        public void Update(QuestionEditViewModel questionViewModel)
+        {
+            _questionService.Update(questionViewModel);
+        }
+
+
     }
 }
