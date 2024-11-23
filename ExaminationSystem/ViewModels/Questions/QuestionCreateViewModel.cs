@@ -11,8 +11,7 @@ namespace ExaminationSystem.ViewModels.Questions
         public int Grade { get; set; }
         public string level { get; set; }
 
-        //public ICollection<ChoiceCreateViewModel> Choices { get; set; }
-       // public AnswerCreateViewModel answer { get; set; }
+        public ICollection<ChoiceCreateViewModel> Choices { get; set; }
     }
 
     public static class QuestionCreateViewModelExtension
@@ -23,9 +22,7 @@ namespace ExaminationSystem.ViewModels.Questions
             {
                 level = viewModel.level,
                 Body = viewModel.Body,
-                Grade = viewModel.Grade,
-                //Answer = viewModel.answer.ToModel(),
-
+                Grade = viewModel.Grade
             };
         }
     }

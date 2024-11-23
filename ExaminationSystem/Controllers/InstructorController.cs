@@ -13,10 +13,10 @@ namespace ExaminationSystem.Controllers
     {
         IInstructorService _instructorService;
         IInstructorCourseService _instructorCourseService;
-        public InstructorController()
+        public InstructorController(IInstructorService instructorService , IInstructorCourseService instructorCourseService)
         {
-            _instructorService = new InstructorService();
-            _instructorCourseService = new InstructorCourseService();
+            _instructorService = instructorService;
+            _instructorCourseService = instructorCourseService;
         }
 
         [HttpPost]

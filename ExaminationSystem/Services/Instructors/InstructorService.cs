@@ -7,9 +7,9 @@ namespace ExaminationSystem.Services.Instructors
     public class InstructorService:IInstructorService
     {
         IRepository<Instructor> _instructorRepository;
-        public InstructorService()
+        public InstructorService(IRepository<Instructor> repository)
         {
-            _instructorRepository = new Repository<Instructor>();
+            _instructorRepository = repository;
         }
         public void Add(InstructorCreateViewModel viewModel)
         {

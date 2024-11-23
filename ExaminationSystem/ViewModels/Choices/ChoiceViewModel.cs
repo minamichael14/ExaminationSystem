@@ -7,6 +7,8 @@ namespace ExaminationSystem.ViewModels.Choices
         public int ID { get; set; }
         public string Content { get; set; }
         public int QuestionID { get; set; }
+        public bool Iscorrect { get; set; } = false;
+
 
     }
 
@@ -16,8 +18,9 @@ namespace ExaminationSystem.ViewModels.Choices
         {
             return new ChoiceViewModel
             {
+                ID = choice.ID,
                 Content = choice.Content,
-                QuestionID = choice.QuestionID
+                QuestionID = choice.QuestionID,
             };
         }
 
@@ -26,9 +29,20 @@ namespace ExaminationSystem.ViewModels.Choices
         {
             return choices.Select(x => new ChoiceViewModel
             {
+                ID = x.ID,
                 Content= x.Content,
                 QuestionID = x.QuestionID
             });
         }
+
+        //public static ICollection<ChoiceViewModel> ToViewModel(this ICollection<Choice> choices)
+        //{
+        //    return choices.Select(x => new ChoiceViewModel
+        //    {
+        //        ID = x.ID,
+        //        Content = x.Content,
+        //        QuestionID = x.QuestionID
+        //    });
+        //}
     }
 }

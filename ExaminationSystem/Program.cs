@@ -1,4 +1,10 @@
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using ExaminationSystem.Config;
 using ExaminationSystem.Middlewares;
+using ExaminationSystem.Models;
+using ExaminationSystem.Services.Questions;
+using ExaminationSystem.ViewModels.Questions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +14,17 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+builder.Host.ConfigureContainer<ContainerBuilder>(container =>
+{
+    container.RegisterModule(new AutofacModule());
+});
+
+//builder.Services.AddAutoMapper(typeof(QuestionProfile));
+
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 

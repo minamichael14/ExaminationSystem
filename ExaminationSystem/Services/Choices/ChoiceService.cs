@@ -1,5 +1,7 @@
 ﻿using ExaminationSystem.Data.Repository;
 using ExaminationSystem.Models;
+using ExaminationSystem.Services.Answers;
+using ExaminationSystem.ViewModels.Answers;
 using ExaminationSystem.ViewModels.Choices;
 
 namespace ExaminationSystem.Services.Choices
@@ -7,15 +9,29 @@ namespace ExaminationSystem.Services.Choices
     public class ChoiceService : IChoiceService
     {
         IRepository<Choice> _choiceRepository;
+        IAnswerService _answerService;
+
 
         public ChoiceService()
         {
             _choiceRepository = new Repository<Choice>();
+            _answerService = new AnswerService();
         }
         public void Add(ChoiceCreateViewModel ViewModel)
         {
-            _choiceRepository.Add(ViewModel.ToModel());
+            var choice = ViewModel.ToModel();
+            _choiceRepository.Add(choice);
             _choiceRepository.SaveChanges();
+            if (ViewModel.Iscorrect)
+            {
+                var answerViewModel = new AnswerCreateViewModel
+                {
+                    ChoiceID = choice.ID,
+                    QuestioID = choice.QuestionID
+                };
+                _answerService.Add(answerViewModel);
+                }
+        
         }
 
         public void Delete(int id)

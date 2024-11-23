@@ -1,6 +1,8 @@
 ﻿using ExaminationSystem.Services.Answers;
 using ExaminationSystem.Services.Choices;
 using ExaminationSystem.Services.Questions;
+using ExaminationSystem.ViewModels.Answers;
+using ExaminationSystem.ViewModels.Choices;
 using ExaminationSystem.ViewModels.Questions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,24 +14,28 @@ namespace ExaminationSystem.Controllers
     public class QuestionController : ControllerBase
     {
         IQuestoionService _questionService;
-        IAnswerService _answerService;
-        IChoiceService _choiceService;
-        public QuestionController()
+        public QuestionController(IQuestoionService questionService)
         {
-            _questionService = new QuestionService();
-            _answerService = new AnswerService();
-            _choiceService = new ChoiceService();
+            _questionService = questionService;
+
         }
 
         [HttpPost]
-        public void Create(QuestionCreateViewModel viewModel)
+        public void Create(QuestionCreateViewModel questionViewModel)
         {
-            _questionService.Add( viewModel );
-            //_answerService.Add(viewModel.answer);
-            //foreach (var choice in viewModel.Choices)
-            //{
-            //    _choiceService.Add(choice);
-            //}
+            _questionService.Add( questionViewModel );
+        }
+
+        [HttpGet]
+        public IEnumerable<QuestionViewModel> Get()
+        {
+            return _questionService.GetAll();
+        }
+
+        [HttpGet("{id}")]
+        public QuestionViewModel GetByID(int id)
+        {
+            return _questionService.GetById(id);
         }
     }
 }

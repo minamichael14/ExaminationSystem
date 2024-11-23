@@ -6,6 +6,7 @@ namespace ExaminationSystem.ViewModels.Choices
     {
         public string Content { get; set; }
         public int QuestionID { get; set; }
+        public bool Iscorrect { get; set; } = false;
 
     }
 
@@ -18,6 +19,21 @@ namespace ExaminationSystem.ViewModels.Choices
                 Content = viewModel.Content,
                 QuestionID = viewModel.QuestionID
             };
+        }
+
+        public static ICollection<Choice> ToModel(this ICollection<ChoiceCreateViewModel> viewModel)
+        {
+            var choices = new List<Choice>();
+            foreach (var item in viewModel)
+            {
+                choices.Add(new Choice
+                {
+                    Content = item.Content,
+                    QuestionID = item.QuestionID
+                });
+
+            }
+            return choices;            
         }
     }
 }
