@@ -6,7 +6,7 @@ namespace ExaminationSystem.ViewModels.Choices
     {
         public string Content { get; set; }
         public int QuestionID { get; set; }
-        public bool Iscorrect { get; set; } = false;
+        public int Order {  get; set; }
 
     }
 
@@ -17,7 +17,8 @@ namespace ExaminationSystem.ViewModels.Choices
             return new Choice
             {
                 Content = viewModel.Content,
-                QuestionID = viewModel.QuestionID
+                QuestionID = viewModel.QuestionID,
+                Order = viewModel.Order
             };
         }
 
@@ -29,11 +30,11 @@ namespace ExaminationSystem.ViewModels.Choices
                 choices.Add(new Choice
                 {
                     Content = item.Content,
-                    QuestionID = item.QuestionID
+                    QuestionID = item.QuestionID,
+                    Order = item.Order
                 });
-
             }
-            return choices;            
+            return choices;
         }
     }
 }

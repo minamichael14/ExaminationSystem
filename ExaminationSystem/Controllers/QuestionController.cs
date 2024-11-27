@@ -28,6 +28,7 @@ namespace ExaminationSystem.Controllers
             return _questionService.GetAll();
         }
 
+
         [HttpGet("{id}")]
         public QuestionViewModel GetByID(int id)
         {

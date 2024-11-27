@@ -6,9 +6,8 @@ namespace ExaminationSystem.Services.Choices
     {
         IEnumerable<ChoiceViewModel> GetAll();
         ChoiceViewModel GetById(int choiceId);
-
-        void Add(ChoiceCreateViewModel ViewModel);
-        void Update(ChoiceEditViewModel ViewModel);
+        void Add(ICollection<ChoiceCreateViewModel> ViewModel);
+        public void Update(ICollection<ChoiceEditViewModel> ViewModels);
         void Delete(int id);
 
     }

@@ -1,7 +1,5 @@
 ﻿using ExaminationSystem.Data.Repository;
 using ExaminationSystem.Models;
-using ExaminationSystem.Services.Answers;
-using ExaminationSystem.ViewModels.Answers;
 using ExaminationSystem.ViewModels.Choices;
 
 namespace ExaminationSystem.Services.Choices
@@ -9,35 +7,30 @@ namespace ExaminationSystem.Services.Choices
     public class ChoiceService : IChoiceService
     {
         IRepository<Choice> _choiceRepository;
-        IAnswerService _answerService;
-
 
         public ChoiceService()
         {
             _choiceRepository = new Repository<Choice>();
-            _answerService = new AnswerService();
         }
-        public void Add(ChoiceCreateViewModel ViewModel)
+        public void Add(ICollection<ChoiceCreateViewModel> ViewModel)
         {
-            var choice = ViewModel.ToModel();
-            _choiceRepository.Add(choice);
-            _choiceRepository.SaveChanges();
-            if (ViewModel.Iscorrect)
+            var choices = ViewModel.ToModel();
+            foreach (var choice in choices)
             {
-                var answerViewModel = new AnswerCreateViewModel
-                {
-                    ChoiceID = choice.ID,
-                    QuestioID = choice.QuestionID
-                };
-                _answerService.Add(answerViewModel);
+                _choiceRepository.Add(choice);
             }
-        
+            _choiceRepository.SaveChanges();
+
+                    
         }
 
-        public void Delete(int id)
+        public void Delete(int questionID)
         {
-            var choice = new Choice { ID = id };
-            _choiceRepository.Delete(choice);
+            var choices = _choiceRepository.Get().Where(x => x.QuestionID == questionID).Select(x=>x.ID).ToList();
+            foreach (var choice in choices)
+            {
+                _choiceRepository.Delete(new Choice { ID = choice});
+            }
             _choiceRepository.SaveChanges();
         }
 
@@ -51,13 +44,32 @@ namespace ExaminationSystem.Services.Choices
             return _choiceRepository.GetByID(choiceID).ToViewModel();
         }
 
-        public void Update(ChoiceEditViewModel ViewModel)
+        public void Update(ICollection<ChoiceEditViewModel> ViewModels)
         {
-            var choice = ViewModel.ToModel();
-            _choiceRepository.SaveInclude(choice, nameof(choice.Content));
-            _choiceRepository.SaveChanges();
+            var questionID =ViewModels.Select(x => x.QuestionID).FirstOrDefault();
+            var choiceIDs = _choiceRepository.Get().Where(x => x.QuestionID == questionID).Select(x => x.ID).ToList();
+            var deletedChoicesID = choiceIDs.Except(ViewModels.Select(x => x.ID)).ToList();
             
 
+            foreach (var item  in ViewModels)
+            {
+                var choice = item.ToModel();
+
+                if (choiceIDs.Contains(item.ID))
+                {
+                    _choiceRepository.SaveInclude(choice, nameof(choice.Content), nameof(choice.Order));
+                }
+                else
+                {
+                    _choiceRepository.Add(choice);
+                }  
+            }
+
+            foreach (var choiceID in deletedChoicesID)
+            {
+                _choiceRepository.Delete(new Choice { ID = choiceID });
+            }
+            _choiceRepository.SaveChanges();
         }
 
     }

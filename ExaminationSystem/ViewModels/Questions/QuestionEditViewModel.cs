@@ -13,14 +13,8 @@ namespace ExaminationSystem.ViewModels.Questions
     {
         public static Question ToModel(this QuestionEditViewModel viewModel)
         {
-            var question = new Question
-            {
-                ID = viewModel.ID,
-                level = viewModel.level,
-                Body = viewModel.Body,
-                Grade = viewModel.Grade,
-                CourseID = viewModel.CourseID
-            };
+            var question = ((QuestionBaseViewModel)viewModel).ToModel();
+            question.ID = viewModel.ID;
             return question;
         }
     }

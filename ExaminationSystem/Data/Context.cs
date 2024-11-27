@@ -10,8 +10,8 @@ namespace ExaminationSystem.Data
         public DbSet<Student> Students { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Question> Questions { get; set; }
-        public DbSet<Answer> Answers { get; set; }
         public DbSet<Choice> Choices { get; set; }
+        public DbSet<Exam> Exams { get; set; }
        
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -31,19 +31,14 @@ namespace ExaminationSystem.Data
                 .WithMany(q => q.Choices)
                 .HasForeignKey(c => c.QuestionID);
 
-            // Define the one-to-one relationship between Question and Answer
-            modelBuilder.Entity<Answer>()
-                .HasOne(a => a.Question)
-                .WithOne(q => q.Answer)
-                .HasForeignKey<Answer>(a => a.QuestionID)
-                .OnDelete(DeleteBehavior.Restrict);  // No cascade delete here
+
+            modelBuilder.Entity<ExamQuestion>()
+            .HasOne(eq => eq.Question)         
+            .WithMany(q => q.ExamQuestions)    
+            .HasForeignKey(eq => eq.QuestionID) 
+            .OnDelete(DeleteBehavior.Restrict);
 
 
-            // Define the foreign key relationship between Answer and Choice (for correct answer)
-            modelBuilder.Entity<Answer>()
-                .HasOne(a => a.Choice)
-                .WithMany()
-                .HasForeignKey(a => a.ChoiceID);
 
         }
 

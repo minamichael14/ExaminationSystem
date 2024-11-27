@@ -13,12 +13,13 @@ namespace ExaminationSystem.Services.StudentCourses
             _studentCourseRepository = new Repository<StudentCourse>();
         }
 
-        public void EnrollStudentInCourse(int courseID, int studentID)
+        public void EnrollStudentInCourse(int courseID, int studentID , int InstructorID)
         {
             _studentCourseRepository.Add(new StudentCourse
             {
                 CourseID = courseID,
-                StudentID = studentID
+                StudentID = studentID,
+                CreatedBy = InstructorID
             });
 
             _studentCourseRepository.SaveChanges();

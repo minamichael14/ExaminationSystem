@@ -18,14 +18,12 @@ namespace ExaminationSystem.Controllers
         ICourseService _courseService;
         IInstructorCourseService _instructorCourseService;
         IStudentCourseService _studentCourseService;
-        IInstructorStudentService _instructorStudentService;
         IQuestoionService _questoionService;
         public CourseController( IQuestoionService questoionService)
         {
             _courseService = new CourseService();
             _instructorCourseService = new InstructorCourseService();
             _studentCourseService = new StudentCourseService();
-            _instructorStudentService = new InstructorStudentService();
             _questoionService = questoionService;
         }
 
@@ -50,10 +48,8 @@ namespace ExaminationSystem.Controllers
         [HttpPost("EnrollStudent")]
         public void EnrollStudent(int studentID , int courseID, int instructorID)
         {
-            _instructorStudentService.EnrollStudentByInstructor(studentID, instructorID);
-            _studentCourseService.EnrollStudentInCourse(courseID, studentID);
+            _studentCourseService.EnrollStudentInCourse(courseID, studentID , instructorID);
         }
-
 
      
         [HttpGet("Instructor")]

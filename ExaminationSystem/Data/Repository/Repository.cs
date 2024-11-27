@@ -18,7 +18,7 @@ namespace ExaminationSystem.Data.Repository
         public void Add(Entity entity)
         {
             entity.CreatedAt = DateTime.Now;
-            entity.CreatedBy = 55;  
+            //entity.CreatedBy = ;  
             
             _dbset.Add(entity);
         }

@@ -1,12 +1,11 @@
 ﻿using ExaminationSystem.Models;
-using ExaminationSystem.ViewModels.Answers;
 using ExaminationSystem.ViewModels.Choices;
-using ExaminationSystem.ViewModels.Courses;
 
 namespace ExaminationSystem.ViewModels.Questions
 {
     public class QuestionCreateViewModel :QuestionBaseViewModel
     {
+        public int CourseID { get; set; }
         public ICollection<ChoiceCreateViewModel> Choices { get; set; }
     }
 
@@ -14,13 +13,10 @@ namespace ExaminationSystem.ViewModels.Questions
     {
         public static Question ToModel(this QuestionCreateViewModel viewModel)
         {
-            return new Question
-            {
-                level = viewModel.level,
-                Body = viewModel.Body,
-                Grade = viewModel.Grade,
-                CourseID = viewModel.CourseID
-            };
+            var question = ((QuestionBaseViewModel)viewModel).ToModel();
+            question.CourseID = viewModel.CourseID;
+            //question.Choices = viewModel.Choices.ToModel();
+            return question;
         }
     }
 }

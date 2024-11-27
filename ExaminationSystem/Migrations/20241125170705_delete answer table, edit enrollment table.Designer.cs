@@ -4,6 +4,7 @@ using ExaminationSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExaminationSystem.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20241125170705_delete answer table, edit enrollment table")]
+    partial class deleteanswertableeditenrollmenttable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -99,93 +102,6 @@ namespace ExaminationSystem.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Courses");
-                });
-
-            modelBuilder.Entity("ExaminationSystem.Models.Exam", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<int>("CourseID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("QuestionNumbers")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TotalGrade")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("isFinalExam")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("isRandom")
-                        .HasColumnType("bit");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("CourseID");
-
-                    b.ToTable("Exams");
-                });
-
-            modelBuilder.Entity("ExaminationSystem.Models.ExamQuestion", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ExamID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("QuestionID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("ExamID");
-
-                    b.HasIndex("QuestionID");
-
-                    b.ToTable("ExamQuestion");
                 });
 
             modelBuilder.Entity("ExaminationSystem.Models.Instructor", b =>
@@ -400,36 +316,6 @@ namespace ExaminationSystem.Migrations
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("ExaminationSystem.Models.Exam", b =>
-                {
-                    b.HasOne("ExaminationSystem.Models.Course", "Course")
-                        .WithMany("Exams")
-                        .HasForeignKey("CourseID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-                });
-
-            modelBuilder.Entity("ExaminationSystem.Models.ExamQuestion", b =>
-                {
-                    b.HasOne("ExaminationSystem.Models.Exam", "Exam")
-                        .WithMany("ExamQuestions")
-                        .HasForeignKey("ExamID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ExaminationSystem.Models.Question", "Question")
-                        .WithMany("ExamQuestions")
-                        .HasForeignKey("QuestionID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Exam");
-
-                    b.Navigation("Question");
-                });
-
             modelBuilder.Entity("ExaminationSystem.Models.InstructorCourse", b =>
                 {
                     b.HasOne("ExaminationSystem.Models.Course", "Course")
@@ -481,18 +367,11 @@ namespace ExaminationSystem.Migrations
 
             modelBuilder.Entity("ExaminationSystem.Models.Course", b =>
                 {
-                    b.Navigation("Exams");
-
                     b.Navigation("InstructorCourses");
 
                     b.Navigation("Questions");
 
                     b.Navigation("StudentCourses");
-                });
-
-            modelBuilder.Entity("ExaminationSystem.Models.Exam", b =>
-                {
-                    b.Navigation("ExamQuestions");
                 });
 
             modelBuilder.Entity("ExaminationSystem.Models.Instructor", b =>
@@ -503,8 +382,6 @@ namespace ExaminationSystem.Migrations
             modelBuilder.Entity("ExaminationSystem.Models.Question", b =>
                 {
                     b.Navigation("Choices");
-
-                    b.Navigation("ExamQuestions");
                 });
 
             modelBuilder.Entity("ExaminationSystem.Models.Student", b =>
