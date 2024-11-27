@@ -5,8 +5,6 @@ using ExaminationSystem.Models;
 using ExaminationSystem.Services.ExamQuestions;
 using ExaminationSystem.Services.Questions;
 using ExaminationSystem.ViewModels.Exams;
-using Microsoft.EntityFrameworkCore;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ExaminationSystem.Services.Exams
 {
@@ -92,7 +90,7 @@ namespace ExaminationSystem.Services.Exams
             // just edit exam details 
             // No Question Edits
             var exam = viewModel.ToModel();
-            _examRepository.SaveInclude(exam, nameof(exam.isFinalExam) , nameof(exam.QuestionNumbers), nameof(exam.Type), nameof(exam.TotalGrade),nameof(exam.isRandom));
+            _examRepository.SaveInclude(exam, nameof(exam.isFinalExam) , nameof(exam.QuestionNumbers), nameof(exam.TotalGrade),nameof(exam.isRandom));
             _examRepository.SaveChanges();
         }
 
