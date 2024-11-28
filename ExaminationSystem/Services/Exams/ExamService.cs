@@ -1,10 +1,13 @@
-﻿using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using ExaminationSystem.Data.Repository;
 using ExaminationSystem.Models;
 using ExaminationSystem.Services.ExamQuestions;
 using ExaminationSystem.Services.Questions;
+using ExaminationSystem.Services.Results;
+using ExaminationSystem.Services.SubmittedAnswers;
 using ExaminationSystem.ViewModels.Exams;
+using ExaminationSystem.ViewModels.Results;
+using ExaminationSystem.ViewModels.SubmittedAnswers;
 
 namespace ExaminationSystem.Services.Exams
 {
@@ -13,13 +16,17 @@ namespace ExaminationSystem.Services.Exams
         IRepository<Exam> _examRepository;
         IExamQuestionService _examQuestionService;
         IQuestoionService _questoionService;
+        ISubmittedAnswerService _submittedAnswerService;
+        IResultService _resultService;
         IMapper _mapper;
 
-        public ExamService(IMapper mapper , IQuestoionService questoionService)
+        public ExamService(IMapper mapper , IQuestoionService questoionService, ISubmittedAnswerService submittedAnswerService , IResultService resultService)
         {
             _examRepository = new Repository<Exam>();
             _examQuestionService = new ExamQuestionService();
             _questoionService = questoionService;
+            _submittedAnswerService = submittedAnswerService;
+            _resultService = resultService;
             _mapper = mapper;
         }
 
@@ -102,12 +109,37 @@ namespace ExaminationSystem.Services.Exams
 
         public void SubmitExam(ExamSubmitViewModel viewModel)
         {
-            //TODO :
-            // store the answer in the submittedAnswer table
-            // Evaluate the submitted answers  
-            // Provide results : result service
 
-            throw new NotImplementedException();
+            int totalExamResult = 0;
+            var SubmittedAnswerCreateViewModel = new SubmittedAnswerCreateViewModel
+            {
+                ExamID = viewModel.ExamID,
+                StudentID = viewModel.StudentID
+            };
+            
+            // store the answer in the submittedAnswer table
+            foreach (var QuestionAnswer in viewModel.QuestionAnswer)
+            {
+                var isCorrect = _questoionService.isCorrect(QuestionAnswer.Key, QuestionAnswer.Value);
+                
+                SubmittedAnswerCreateViewModel.QuestionID = QuestionAnswer.Key;
+                SubmittedAnswerCreateViewModel.Choiceorder = QuestionAnswer.Value;
+                SubmittedAnswerCreateViewModel.IsCorrect = isCorrect;
+
+                _submittedAnswerService.Create(SubmittedAnswerCreateViewModel);
+
+                if (isCorrect)
+                {
+                    totalExamResult += _questoionService.GetQuestionGrade(QuestionAnswer.Key);
+                }
+            }
+            var resultCreateViewModel = new ResultCreateViewModel
+            {
+                value = totalExamResult,
+                ExamID= viewModel.ExamID,
+                StudentID  = viewModel.StudentID
+            };
+            _resultService.Save(resultCreateViewModel);
         }
 
         public IEnumerable<ExamViewModel> GetCourseExams(int courseID)

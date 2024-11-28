@@ -12,6 +12,8 @@ namespace ExaminationSystem.Services.Questions
         void Update(QuestionEditViewModel ViewModel);
 
         void Delete(int questionId);
+        bool isCorrect(int questionId , int choiceOrder);
+        int GetQuestionGrade(int questionId);
 
     }
 }

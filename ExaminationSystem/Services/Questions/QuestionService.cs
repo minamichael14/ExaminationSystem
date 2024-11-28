@@ -94,5 +94,23 @@ namespace ExaminationSystem.Services.Questions
             _choiceService.Update(ViewModel.Choices);
             
         }
+
+        public bool isCorrect(int questionId, int choiceOrder)
+        {
+            var correctChoiceOrder = _questioRepository.Get()
+                                        .Where(x => x.ID == questionId)
+                                        .Select(x => x.CorrectChoiceOrder)
+                                        .FirstOrDefault();
+            if(correctChoiceOrder == choiceOrder)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public int GetQuestionGrade(int questionId)
+        {
+            return _questioRepository.Get().Where(q=>q.ID == questionId).Select(q => q.Grade).FirstOrDefault();
+        }
     }
 }

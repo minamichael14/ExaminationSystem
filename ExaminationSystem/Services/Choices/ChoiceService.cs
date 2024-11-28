@@ -19,9 +19,7 @@ namespace ExaminationSystem.Services.Choices
             {
                 _choiceRepository.Add(choice);
             }
-            _choiceRepository.SaveChanges();
-
-                    
+            _choiceRepository.SaveChanges();         
         }
 
         public void Delete(int questionID)

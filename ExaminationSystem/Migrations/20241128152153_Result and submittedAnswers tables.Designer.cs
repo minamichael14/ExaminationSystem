@@ -4,6 +4,7 @@ using ExaminationSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExaminationSystem.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20241128152153_Result and submittedAnswers tables")]
+    partial class ResultandsubmittedAnswerstables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -334,7 +337,7 @@ namespace ExaminationSystem.Migrations
                     b.Property<int?>("UpdatedBy")
                         .HasColumnType("int");
 
-                    b.Property<int>("Value")
+                    b.Property<int>("value")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
@@ -446,14 +449,11 @@ namespace ExaminationSystem.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<int>("ExamID")
+                    b.Property<int>("ExamQuestionID")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsCorrect")
                         .HasColumnType("bit");
-
-                    b.Property<int>("QuestionID")
-                        .HasColumnType("int");
 
                     b.Property<int>("StudentID")
                         .HasColumnType("int");
@@ -465,6 +465,8 @@ namespace ExaminationSystem.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("ExamQuestionID");
 
                     b.HasIndex("StudentID");
 
@@ -582,11 +584,19 @@ namespace ExaminationSystem.Migrations
 
             modelBuilder.Entity("ExaminationSystem.Models.SubmittedAnswer", b =>
                 {
+                    b.HasOne("ExaminationSystem.Models.ExamQuestion", "ExamQuestion")
+                        .WithMany()
+                        .HasForeignKey("ExamQuestionID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ExaminationSystem.Models.Student", "Student")
                         .WithMany("submittedAnswers")
                         .HasForeignKey("StudentID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ExamQuestion");
 
                     b.Navigation("Student");
                 });

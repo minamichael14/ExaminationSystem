@@ -62,5 +62,11 @@ namespace ExaminationSystem.Controllers
         {
             _examService.EditExamDetails(viewModel);
         }
+
+        [HttpPost("Submit")]
+        public void Submit(ExamSubmitViewModel viewModel)
+        {
+            _examService.SubmitExam(viewModel);
+        }
     }
 }
