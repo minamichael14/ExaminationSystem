@@ -1,4 +1,4 @@
-﻿using ExaminationSystem.Models;
+﻿using System.Linq.Expressions;
 
 namespace ExaminationSystem.Data.Repository
 {
@@ -9,8 +9,10 @@ namespace ExaminationSystem.Data.Repository
         void Delete(Entity entity);
         void HardDelete(Entity entity);
         IQueryable<Entity> Get();
+        IQueryable<Entity> Get(Expression<Func<Entity , bool>> predicate);
         IQueryable<Entity> GetWithDeleted();
         Entity GetByID(int id);
         void SaveChanges();
+        bool IsExist(int id);
     }
 }

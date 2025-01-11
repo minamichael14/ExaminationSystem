@@ -1,6 +1,8 @@
-﻿namespace ExaminationSystem.Models
+﻿using ExaminationSystem.Models.Users;
+
+namespace ExaminationSystem.Models
 {
-    public class Student:BaseModel
+    public class Student:User
     {
         public Student()
         {
@@ -8,10 +10,8 @@
             Results = new List<Result>();
             submittedAnswers = new List<SubmittedAnswer>();
         }
-        public string Name { get; set; }
         public int Grade { get; set; }
-        public int Age { get; set; }
-        public string Phone { get; set; }
+
         public ICollection<StudentCourse> StudentCourses { get; set; }
         public ICollection<SubmittedAnswer> submittedAnswers { get; set; }
         public ICollection<Result> Results { get; set; }

@@ -1,11 +1,13 @@
-﻿using ExaminationSystem.Services.Exams;
+﻿using ExaminationSystem.Filters;
+using ExaminationSystem.Models.Enums;
+using ExaminationSystem.Services.Exams;
 using ExaminationSystem.ViewModels.Exams;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExaminationSystem.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]/[action]")]
     [ApiController]
     public class ExamController : ControllerBase
     {
@@ -15,7 +17,10 @@ namespace ExaminationSystem.Controllers
         {
             _examService = examService;
         }
+        
         [HttpGet]
+        [Authorize]
+        [TypeFilter(typeof(CustomizeAuthorizeAttribute),Arguments = new object[] {Feature.GetAllExams})]
         public IEnumerable<ExamViewModel> GetAll()
         {
             return _examService.GetAll();
@@ -27,40 +32,82 @@ namespace ExaminationSystem.Controllers
             return _examService.GetCourseExams(courseID);
         }
 
-        [HttpPost("CreateFinalExam")]
-        public void CreateFinalExam(ExamCreateViewModel viewModel)
+        [HttpPost("Create-Final-Exam")]
+        public IActionResult CreateFinalExam(ExamCreateViewModel viewModel)
         {
-           _examService.CreateNormalFinalExam(viewModel);
+            if (_examService.CreateNormalFinalExam(viewModel))
+            {
+                return Created();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
-        [HttpPost("CreateRandomFinalExam")]
-        public void CreateRandomFinalExam(ExamRandomCreateViewModel viewModel)
+        [HttpPost("Create-Random-Final-Exam")]
+        public IActionResult CreateRandomFinalExam(ExamCreateViewModel viewModel)
         {
-            _examService.CreateRandomFinalExam(viewModel);
+            if(_examService.CreateRandomFinalExam(viewModel))
+            {
+                return Created();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
-        [HttpPost("CreateQuiz")]
-        public void CreateQuiz(ExamCreateViewModel viewModel)
+        [HttpPost("Create-Quiz")]
+        public IActionResult CreateQuiz(ExamCreateViewModel viewModel)
         {
-            _examService.CreateNormalQuiz(viewModel);
+            if(_examService.CreateNormalQuiz(viewModel))
+            {
+                return Created();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
-        [HttpPost("CreateRandomQuiz")]
-        public void CreateRandomQuiz(ExamRandomCreateViewModel viewModel)
+        [HttpPost("Create-Random-Quiz")]
+        public IActionResult CreateRandomQuiz(ExamCreateViewModel viewModel)
         {
-            _examService.CreateRandomQuiz(viewModel);
+            if(_examService.CreateRandomQuiz(viewModel))
+            {
+                return Created();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         [HttpDelete]
-        public void Delete(int examID) 
+        public IActionResult Delete(int examID) 
         {
-            _examService.DeleteExam(examID);
+            if(_examService.DeleteExam(examID))
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPut]
-        public void Update(ExamEditViewModel viewModel)
+        public IActionResult Update(ExamEditViewModel viewModel)
         {
-            _examService.EditExamDetails(viewModel);
+            if(_examService.EditExamDetails(viewModel))
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPost("Submit")]

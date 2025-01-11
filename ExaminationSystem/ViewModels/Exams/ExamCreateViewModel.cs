@@ -1,5 +1,4 @@
 ﻿using ExaminationSystem.Models;
-using ExaminationSystem.ViewModels.Questions;
 
 namespace ExaminationSystem.ViewModels.Exams
 {
@@ -10,7 +9,7 @@ namespace ExaminationSystem.ViewModels.Exams
         public bool isRandom { get; set; } = false;
         public bool isFinalExam { get; set; } = false;
         public int CourseID { get; set; }
-        public ICollection<int> QuestionIDs { get; set; }
+        public ICollection<int>? QuestionIDs { get; set; }
     }
 
     public static class ExamCreateViewModelExtension

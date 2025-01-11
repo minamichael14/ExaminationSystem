@@ -8,5 +8,7 @@ namespace ExaminationSystem.Services.Courses
         void Delete(int CourseID);
         void Update(CourseEditViewModel viewModel);
         IEnumerable<CourseViewModel> GetAll();
+        CourseViewModel GetByID(int id);
+        bool IsExist(int id);
     }
 }

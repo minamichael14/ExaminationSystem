@@ -1,5 +1,4 @@
-﻿
-using ExaminationSystem.Data.Repository;
+﻿using ExaminationSystem.Data.Repository;
 using ExaminationSystem.Models;
 
 namespace ExaminationSystem.Services.ExamQuestions
@@ -14,7 +13,6 @@ namespace ExaminationSystem.Services.ExamQuestions
 
         public void AddQuestions(int examID ,ICollection<int> questionIds)
         {
-            ICollection<ExamQuestion> examQuestions = null;
             foreach (int questionID in questionIds)
             {
                 _examQuestionsRepository.Add( new ExamQuestion
@@ -24,7 +22,6 @@ namespace ExaminationSystem.Services.ExamQuestions
                 });
             }
             _examQuestionsRepository.SaveChanges();
-
         }
     
         public void DeleteQuestions(int ExamID)

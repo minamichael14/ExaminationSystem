@@ -21,7 +21,6 @@ namespace ExaminationSystem.Services.StudentCourses
                 StudentID = studentID,
                 CreatedBy = InstructorID
             });
-
             _studentCourseRepository.SaveChanges();
         }
 

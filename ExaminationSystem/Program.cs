@@ -1,10 +1,11 @@
+using System.Text;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using ExaminationSystem.Config;
+using ExaminationSystem.Data;
 using ExaminationSystem.Middlewares;
-using ExaminationSystem.Models;
-using ExaminationSystem.Services.Questions;
-using ExaminationSystem.ViewModels.Questions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,12 +22,35 @@ builder.Host.ConfigureContainer<ContainerBuilder>(container =>
     container.RegisterModule(new AutofacModule());
 });
 
-//builder.Services.AddAutoMapper(typeof(QuestionProfile));
-
-
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+var key = Encoding.UTF8.GetBytes(Constants.SecretKey);
+builder.Services.AddAuthentication(opts => 
+{
+    opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(opts=>
+{
+    opts.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        ValidIssuer = Constants.JWTIssuer,
+        ValidateIssuer = true,
+
+        ValidAudience = Constants.JWTAudience,
+        ValidateAudience = true,
+
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuerSigningKey = true,
+
+        ValidateLifetime = true
+    };
+});
+
+
+builder.Services.AddAuthorization();
 var app = builder.Build();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

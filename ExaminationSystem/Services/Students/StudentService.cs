@@ -8,12 +8,10 @@ namespace ExaminationSystem.Services.Students
     public class StudentService : IStudentService
     {
         IRepository<Student> _studentRepository;
-
         public StudentService()
         {
             _studentRepository = new Repository<Student>();
         }
-
         public void Create(StudentCreateViewModel viewModel)
         {
             _studentRepository.Add(viewModel.ToModel());

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ExaminationSystem.Data.Repository;
 using ExaminationSystem.Models;
+using ExaminationSystem.Services.Courses;
 using ExaminationSystem.Services.ExamQuestions;
 using ExaminationSystem.Services.Questions;
 using ExaminationSystem.Services.Results;
@@ -18,95 +19,127 @@ namespace ExaminationSystem.Services.Exams
         IQuestoionService _questoionService;
         ISubmittedAnswerService _submittedAnswerService;
         IResultService _resultService;
+        ICourseService _courseService;
         IMapper _mapper;
 
-        public ExamService(IMapper mapper , IQuestoionService questoionService, ISubmittedAnswerService submittedAnswerService , IResultService resultService)
+        public ExamService(IMapper mapper, 
+            IQuestoionService questoionService, 
+            ISubmittedAnswerService submittedAnswerService,
+            IResultService resultService,
+            ICourseService courseService)
         {
             _examRepository = new Repository<Exam>();
             _examQuestionService = new ExamQuestionService();
             _questoionService = questoionService;
             _submittedAnswerService = submittedAnswerService;
             _resultService = resultService;
+            _courseService = courseService;
+            
             _mapper = mapper;
         }
-
-        public int CreateExam(Exam exam)
-        {
-            _examRepository.Add(exam);
-            _examRepository.SaveChanges();
-            return exam.ID;
-        }
-        public bool CourseHasFinalExam(int courseID)
-        {
-            return _examRepository.Get().Any(x => x.CourseID == courseID && x.isFinalExam == true);
-        }
+        
         public bool CreateNormalFinalExam(ExamCreateViewModel viewModel)
         {
-            // validate if there are other final exams in the course
-            if (CourseHasFinalExam(viewModel.CourseID))
+            bool isValid = ValidateExam(viewModel);
+            if (isValid)
             {
-                return false;
-            }
-            else
-            {
-                var exam = viewModel.ToModel();
-                var examID = CreateExam(exam);
+                var examID = CreateExam(viewModel);
                 _examQuestionService.AddQuestions(examID, viewModel.QuestionIDs);
                 return true;
             }
-                
-        }
-        public bool CreateRandomFinalExam(ExamRandomCreateViewModel viewModel)
-        {
-            if (CourseHasFinalExam(viewModel.CourseID))
+            else
             {
                 return false;
             }
-            else
+
+        }
+        public bool CreateRandomFinalExam(ExamCreateViewModel viewModel)
+        {
+            bool isValid = ValidateExam(viewModel);
+            if (isValid)
             {
-                var exam = viewModel.ToModel();
-                var examID = CreateExam(exam);
-                var questionIDs = _questoionService.GetRandomQuestions(exam.CourseID, viewModel.QuestionNumbers).ToList();
+                var examID = CreateExam(viewModel);
+                var questionIDs = _questoionService.GetRandomQuestions(viewModel.CourseID, viewModel.QuestionNumbers).ToList();
                 _examQuestionService.AddQuestions(examID, questionIDs);
                 return true;
-            }       
+            }
+            else
+            {
+                return false;
+            }
         }
-        public void CreateNormalQuiz(ExamCreateViewModel viewModel)
+        public bool CreateNormalQuiz(ExamCreateViewModel viewModel)
         {
-            var exam = viewModel.ToModel();
-            var examID = CreateExam(exam);
-            _examQuestionService.AddQuestions(examID,viewModel.QuestionIDs);
+            bool isValid = ValidateExam(viewModel);
+            if (isValid)
+            {
+                var examID = CreateExam(viewModel);
+                _examQuestionService.AddQuestions(examID, viewModel.QuestionIDs);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
-        public void CreateRandomQuiz(ExamRandomCreateViewModel viewModel)
+        public bool CreateRandomQuiz(ExamCreateViewModel viewModel)
         {
-            var exam = viewModel.ToModel();
-            var examID = CreateExam(exam);
-            var questionIDs = _questoionService.GetRandomQuestions(exam.CourseID, viewModel.QuestionNumbers).ToList();
-            _examQuestionService.AddQuestions(examID, questionIDs);
+            bool isValid = ValidateExam(viewModel);
+            if (isValid)
+            {
+                var examID = CreateExam(viewModel);
+                var questionIDs = _questoionService.GetRandomQuestions(viewModel.CourseID, viewModel.QuestionNumbers).ToList();
+                _examQuestionService.AddQuestions(examID, questionIDs);
+                return true;
+            }
+            else
+            {
+                return false ;
+            }
         }
-        public void DeleteExam(int id)
+        public bool DeleteExam(int id)
         {
-            var exam = new Exam { ID = id };
-            _examRepository.Delete(exam);
-            _examRepository.SaveChanges();
-            _examQuestionService.DeleteQuestions(id);
+            if (_examRepository.IsExist(id)) 
+            {
+                var exam = new Exam { ID = id };
+                _examRepository.Delete(exam);
+                _examRepository.SaveChanges();
+                _examQuestionService.DeleteQuestions(id);
+                return true;
+            }
+            else
+            {
+                return false;
+            }   
         }
-
-        public void EditExamDetails(ExamEditViewModel viewModel)
+        public bool EditExamDetails(ExamEditViewModel viewModel)
         {
-            // just edit exam details 
-            // No Question Edits
-            var exam = viewModel.ToModel();
-            _examRepository.SaveInclude(exam, nameof(exam.isFinalExam) , nameof(exam.QuestionNumbers), nameof(exam.TotalGrade),nameof(exam.isRandom));
-            _examRepository.SaveChanges();
+            //Note: just edit exam details -> No Question Edits
+            if (_examRepository.IsExist(viewModel.ID))
+            {
+                var exam = viewModel.ToModel();
+                _examRepository.SaveInclude(exam, nameof(exam.isFinalExam), nameof(exam.TotalGrade), nameof(exam.isRandom));
+                _examRepository.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
-
-        public ExamViewModel getExam(int id)
+        public ExamViewModel GetExam(int id)
         {
-            var exams = _examRepository.GetByID(id);
-            return _mapper.Map<ExamViewModel>(exams);
+            if (_examRepository.IsExist(id))
+            {
+                var exams = _examRepository.GetByID(id);
+                return _mapper.Map<ExamViewModel>(exams);
+            }
+            else
+            {
+                //return default;
+                throw new ArgumentException("No Exam existed with the specified ExamID.");
+            }
         }
-
         public void SubmitExam(ExamSubmitViewModel viewModel)
         {
 
@@ -141,21 +174,80 @@ namespace ExaminationSystem.Services.Exams
             };
             _resultService.Save(resultCreateViewModel);
         }
-
         public IEnumerable<ExamViewModel> GetCourseExams(int courseID)
         {
-            var exams = _examRepository.Get()
-                .Where(e => e.CourseID == courseID);
-            
-            return _mapper.ProjectTo<ExamViewModel>(exams);
+            if (_courseService.IsExist(courseID))
+            {
+                var exams = _examRepository.Get()
+                            .Where(e => e.CourseID == courseID);
+                return _mapper.ProjectTo<ExamViewModel>(exams);
+            }
+            else
+            {
+                //return default;
+                throw new ArgumentException("No course existed with the specified CourseID.");
+            }
         }
-
         public IEnumerable<ExamViewModel> GetAll()
         {
             var exams = _examRepository.Get();
 
             return _mapper.ProjectTo<ExamViewModel>(exams);
         }
+        
+        private int CreateExam(ExamCreateViewModel viewModel)
+        {
+            var exam = viewModel.ToModel();
+            _examRepository.Add(exam);
+            _examRepository.SaveChanges();
+            return exam.ID;
+        }
+        private bool CourseHasFinalExam(int courseID)
+        {
+            return _examRepository.Get().Any(x => x.CourseID == courseID && x.isFinalExam == true);
+        }
+        private bool ValidateExam(ExamCreateViewModel viewModel)
+        {
+            if (viewModel.QuestionNumbers <= 0)
+            {
+                return false;
+            }
+            if (viewModel.TotalGrade <= 0)
+            {
+                return false;
+            }
+            if (!_courseService.IsExist(viewModel.CourseID))
+            {
+                return false;
+            }
+            if (viewModel.isRandom)
+            {
+                if (viewModel.QuestionIDs != null)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (viewModel.QuestionIDs == null || !viewModel.QuestionIDs.Any())
+                {
+                    return false;
+                }
+                var validQuestions = _questoionService.GetByCourse(viewModel.CourseID).Select(x => x.ID);
+                if (viewModel.QuestionIDs.Any(q => !validQuestions.Contains(q)))
+                {
+                    return false;
+                }
+            }
 
+            if (viewModel.isFinalExam)
+            {
+                if (CourseHasFinalExam(viewModel.CourseID))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }

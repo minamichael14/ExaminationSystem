@@ -1,11 +1,12 @@
 ﻿
+using System.Linq.Expressions;
 using ExaminationSystem.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace ExaminationSystem.Data.Repository
 {
-    public class Repository<Entity> : IRepository<Entity> where Entity : BaseModel 
+    public class Repository<Entity> : IRepository<Entity> where Entity : BaseModel
     {
         Context _context;
         DbSet<Entity> _dbset;
@@ -73,6 +74,11 @@ namespace ExaminationSystem.Data.Repository
         {
             return _dbset.Where(x=> x.Deleted==false);
         }
+
+        public IQueryable<Entity> Get(Expression<Func<Entity, bool>> predicate)
+        {
+            return Get().Where(predicate);
+        }
         public IQueryable<Entity> GetWithDeleted()
         {
             return _dbset;
@@ -87,5 +93,12 @@ namespace ExaminationSystem.Data.Repository
         {
             _context.SaveChanges();
         }
+
+        public bool IsExist(int id)
+        {
+            return _dbset.Any(x=>x.ID==id);
+        }
+
+        
     }
 }

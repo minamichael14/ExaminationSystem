@@ -1,4 +1,5 @@
 ﻿using ExaminationSystem.Models;
+using ExaminationSystem.Models.Users;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
@@ -12,7 +13,9 @@ namespace ExaminationSystem.Data
         public DbSet<Question> Questions { get; set; }
         public DbSet<Choice> Choices { get; set; }
         public DbSet<Exam> Exams { get; set; }
-       
+        public DbSet<RoleFeature> RoleFeatures { get; set; }
+        public DbSet<User> Users { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

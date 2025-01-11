@@ -4,7 +4,6 @@ using ExaminationSystem.Models;
 using ExaminationSystem.Services.Choices;
 using ExaminationSystem.ViewModels.Choices;
 using ExaminationSystem.ViewModels.Questions;
-using Microsoft.EntityFrameworkCore;
 
 namespace ExaminationSystem.Services.Questions
 {
@@ -14,7 +13,6 @@ namespace ExaminationSystem.Services.Questions
         IChoiceService _choiceService;
         IMapper _mapper;
 
-
         public QuestionService(IRepository<Question> repository, IChoiceService choiceService,IMapper mapper)
         {
             _questioRepository = repository;
@@ -23,7 +21,6 @@ namespace ExaminationSystem.Services.Questions
         }
         public void Add(QuestionCreateViewModel ViewModel)
         {
-            //_mapper.ProjectTo(Question) <QuestionCreateViewModel>;
             var question = ViewModel.ToModel();
             _questioRepository.Add(question);
             _questioRepository.SaveChanges();
@@ -45,15 +42,12 @@ namespace ExaminationSystem.Services.Questions
         public IEnumerable<QuestionViewModel> GetAll()
         {
             var question = _questioRepository.Get();
-
-            return _mapper.ProjectTo<QuestionViewModel>(question);
-            
+            return _mapper.ProjectTo<QuestionViewModel>(question);            
         }
 
         public IEnumerable<QuestionViewModel> GetByCourse(int courseID)
         {
             var question = _questioRepository.Get().Where(x=> x.CourseID == courseID);
-
             return _mapper.ProjectTo<QuestionViewModel>(question);
         }
 
@@ -61,38 +55,23 @@ namespace ExaminationSystem.Services.Questions
         {
             Random random = new Random();
             var allQuestionIDs = _questioRepository.Get().Where(x => x.CourseID == courseID).Select(q => q.ID).ToList();
-            int index = 0;
-            var selectedQuestionsID = new HashSet<int>();
-            var questionsCount = allQuestionIDs.Count();
-            for (int i = 0; ; i++)
-            {
-                index = random.Next(questionsCount);
-
-                selectedQuestionsID.Add(allQuestionIDs[index]);
-                if (selectedQuestionsID.Count == questionsNumber)
-                {
-                    break;
-                }
-            }
+            var selectedQuestionsID =  allQuestionIDs.OrderBy(x => random.Next()).Take(questionsNumber).ToList();
             return selectedQuestionsID;
         }
 
         public QuestionViewModel GetById(int questionId)
         {
             var question = _questioRepository.Get().Where(x => x.ID == questionId);
-  
             return _mapper.ProjectTo<QuestionViewModel>(question).FirstOrDefault();
 
         }
 
         public void Update(QuestionEditViewModel ViewModel)
         {
-            //var question = _mapper.Map<Question>(ViewModel);
             var question = ViewModel.ToModel();
             _questioRepository.SaveInclude(question, nameof(question.Body), nameof(question.Grade), nameof(question.level) , nameof(question.CorrectChoiceOrder));
             _questioRepository.SaveChanges();
             _choiceService.Update(ViewModel.Choices);
-            
         }
 
         public bool isCorrect(int questionId, int choiceOrder)
